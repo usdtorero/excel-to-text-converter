@@ -2,7 +2,7 @@ const {shell, remote} = require('electron');
 const {dialog, app} = remote;
 const fs = require('fs');
 const path = require('path');
-const XLSX = require('xlsx');
+const XLS = require('xls');
 
 const DEFAULT_NAMING_SCHEME = '<WORKBOOK> - <SHEET>.csv';
 const RGX_META = /<(WORKBOOK|SHEET|SHEET_NUMBER|EXTENSION)>/g;
@@ -100,7 +100,7 @@ $(function() {
         let result = [],
             myVue = this;
         myVue.includedWorkbooks.forEach(objWB => {
-          let wb = XLSX.readFileSync(objWB.path),
+          let wb = XLS.readFileSync(objWB.path),
               sheetNumber = 0;
           wb.Workbook.Sheets.forEach(sheetDetails => {
             if (sheetDetails.Hidden === 0) {
@@ -197,7 +197,7 @@ $(function() {
             let maxLevelsDown = 0;
 
             recurseDirSync(dirPath, function(filePath, isFile, stat) {
-              if (/\.xlsx?$/i.test(filePath)) {
+              if (/\.xls?$/i.test(filePath)) {
                 let fileDirPath = path.dirname(filePath);
                 if (!foundWorkbookInSub && (fileDirPath != dirPath)) {
                   foundWorkbookInSub = true;
@@ -250,7 +250,7 @@ $(function() {
         myVue.preConversions.forEach(file => {
           myVue.converting = true;
           if (myVue.matchesFilters(file.sheetName)) {
-            let output = XLSX.utils['json' == file.typeName ? 'sheet_to_json' : 'sheet_to_csv'](
+            let output = XLS.utils['json' == file.typeName ? 'sheet_to_json' : 'sheet_to_csv'](
               file.sheet,
               { FS: 'tsv' == file.typeName ? '\t' : ',' }
             );
